@@ -21,9 +21,9 @@ This project is inspired by the STORM (Synthesis of Topic Outlines through Retri
 You can install the AI Product Analysis CLI globally using npm or pnpm:
 
 ```bash
-npm install -g ai-product-analysis-cli
+npm install -g product-analyzer
 # or
-pnpm add -g ai-product-analysis-cli
+pnpm add -g product-analyzer
 ```
 
 ## Usage
@@ -90,8 +90,8 @@ To set up the project for development:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/ai-product-analysis-cli.git
-   cd ai-product-analysis-cli
+   git clone https://github.com/yourusername/product-analyzer.git
+   cd product-analyzer
    ```
 
 2. Install dependencies:
