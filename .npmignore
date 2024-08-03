@@ -7,6 +7,7 @@ tsconfig.json
 .eslintrc.js
 .prettierrc
 nest-cli.json
+.github
 
 # Documentation
 README.md
