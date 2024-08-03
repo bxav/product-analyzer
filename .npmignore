@@ -1,11 +1,46 @@
+# Source code
 src
 test
+
+# Configuration files
 tsconfig.json
 .eslintrc.js
 .prettierrc
 nest-cli.json
+
+# Documentation
 README.md
+
+# Version control
 .git
 .gitignore
+
+# Dependencies
 node_modules
+
+# pnpm files
 pnpm-lock.yaml
+
+# Environment files
+.env
+.env.*
+
+# IDE files
+.vscode
+.idea
+
+# Logs
+*.log
+
+# Build artifacts
+coverage
+.nyc_output
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# Other files not needed in the published package
+Dockerfile
+docker-compose.yml

@@ -26,9 +26,9 @@ export class OutlineService {
     const outlinePrompt = ChatPromptTemplate.fromMessages([
       [
         'system',
-        'You are a digital product analyst. Write an outline for a detailed analysis of a digital product. Be comprehensive and specific, considering the product type.',
+        'You are a product analyst. Write an outline for a detailed analysis of a product. Be comprehensive and specific, considering the product type.',
       ],
-      ['user', '{product}'],
+      ['user', 'Product: {product}\nProduct Type: {productType}'],
     ]);
 
     this.loggingService.startSpinner('Generating initial outline');

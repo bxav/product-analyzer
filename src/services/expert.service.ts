@@ -39,7 +39,7 @@ export class ExpertService {
       ],
       [
         'user',
-        'Product: {product}\n\nGenerate 4-5 expert personas, each with a name, expertise, role, and brief description of their focus:',
+        'Product: {product}\nProduct Type: {productType}\n\nGenerate 4-5 expert personas, each with a name, expertise, role, and brief description of their focus:',
       ],
     ]);
 
@@ -47,7 +47,10 @@ export class ExpertService {
     const expertChain = expertPrompt.pipe(
       this.longContextLLM.withStructuredOutput(groupExpertSchema),
     );
-    const experts = await expertChain.invoke({ product: state.product });
+    const experts = await expertChain.invoke({
+      product: state.product,
+      productType: state.productType,
+    });
     this.loggingService.stopSpinner('Expert personas generated successfully');
     return { experts: experts.experts };
   }
