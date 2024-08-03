@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { BaseMessage } from '@langchain/core/messages';
 
 export const productOutlineSchema = z.object({
-  product_name: z.string().describe('The name of the AI product.'),
+  product_name: z.string().describe('The name of the digital product.'),
   sections: z
     .array(
       z.object({
@@ -10,7 +10,7 @@ export const productOutlineSchema = z.object({
         description: z.string().describe('The description of the section.'),
       }),
     )
-    .describe('Sections of the AI product analysis.'),
+    .describe('Sections of the digital product analysis.'),
 });
 
 export const expertSchema = z.object({
@@ -35,6 +35,7 @@ export interface InterviewState {
 
 export interface ProductAnalysisState {
   product: string;
+  productType: string;
   outline: ProductOutline;
   experts: Expert[];
   interview_results: Array<{

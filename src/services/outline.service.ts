@@ -26,7 +26,7 @@ export class OutlineService {
     const outlinePrompt = ChatPromptTemplate.fromMessages([
       [
         'system',
-        'You are an AI product analyst. Write an outline for a detailed analysis of an AI product. Be comprehensive and specific.',
+        'You are a digital product analyst. Write an outline for a detailed analysis of a digital product. Be comprehensive and specific, considering the product type.',
       ],
       ['user', '{product}'],
     ]);
@@ -35,7 +35,10 @@ export class OutlineService {
     const outlineChain = outlinePrompt.pipe(
       this.fastLLM.withStructuredOutput(productOutlineSchema),
     );
-    const outline = await outlineChain.invoke({ product: state.product });
+    const outline = await outlineChain.invoke({
+      product: state.product,
+      productType: state.productType,
+    });
     this.loggingService.stopSpinner('Initial outline generated successfully');
     return { outline };
   }
@@ -46,7 +49,7 @@ export class OutlineService {
     const refinePrompt = ChatPromptTemplate.fromMessages([
       [
         'system',
-        'You are refining the outline of an AI product analysis based on expert interviews. Make the outline comprehensive and specific.',
+        'You are refining the outline of a digital product analysis based on expert interviews. Make the outline comprehensive and specific, considering the product type.',
       ],
       [
         'user',

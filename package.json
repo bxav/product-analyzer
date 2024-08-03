@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "CLI tool for AI product analysis",
   "bin": {
-    "ai-product-analysis": "./dist/main.js"
+    "product-analyzer": "./dist/main.js"
   },
   "scripts": {
     "build": "nest build",
@@ -78,5 +78,5 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "packageManager": "pnpm@8.0.0"
+  "packageManager": "pnpm@9.6.0+sha256.dae0f7e822c56b20979bb5965e3b73b8bdabb6b8b8ef121da6d857508599ca35"
 }

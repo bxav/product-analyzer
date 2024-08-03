@@ -3,7 +3,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { AIProductAnalysisService } from '../services/ai-product-analysis.service';
 import { LoggingService } from '../services/logging.service';
 
-@Command({ name: 'analyze', description: 'Analyze an AI product' })
+@Command({ name: 'analyze', description: 'Analyze a digital product' })
 export class AnalyzeProductCommand extends CommandRunner {
   constructor(
     private readonly analysisService: AIProductAnalysisService,
@@ -24,12 +24,16 @@ export class AnalyzeProductCommand extends CommandRunner {
     }
 
     const product = passedParams[0];
+    const productType = options?.type || 'generic';
     const outputFile = options?.output;
 
     try {
-      this.loggingService.info(`Starting analysis for: ${product}`);
+      this.loggingService.info(
+        `Starting analysis for: ${product} (Type: ${productType})`,
+      );
       const analysis = await this.analysisService.executeProductAnalysis(
         product,
+        productType,
         'thread-id',
         outputFile,
       );
@@ -50,6 +54,14 @@ export class AnalyzeProductCommand extends CommandRunner {
         );
       }
     }
+  }
+
+  @Option({
+    flags: '-t, --type <type>',
+    description: 'Specify the type of digital product',
+  })
+  parseType(val: string) {
+    return val;
   }
 
   @Option({

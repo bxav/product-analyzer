@@ -35,7 +35,7 @@ export class ExpertService {
     const expertPrompt = ChatPromptTemplate.fromMessages([
       [
         'system',
-        'Create a diverse group of expert personas to contribute to an AI product analysis. Each persona should have a unique perspective on the product.',
+        'Create a diverse group of expert personas to contribute to a digital product analysis. Each persona should have a unique perspective on the product type.',
       ],
       [
         'user',
@@ -118,13 +118,13 @@ export class ExpertService {
     const questionPrompt = ChatPromptTemplate.fromMessages([
       [
         'system',
-        `You are an AI product analyst with a specific focus. Your persona is:
+        `You are a digital product analyst with a specific focus. Your persona is:
         Name: {name}
         Role: {role}
         Expertise: {expertise}
         Description: {description}
 
-        Ask a question to gather information for your AI product analysis. Be specific and relevant to your expertise.`,
+        Ask a question to gather information for your digital product analysis. Be specific and relevant to your expertise and the product type.`,
       ],
       [
         'human',

@@ -1,24 +1,22 @@
-# AI Product Analysis CLI
+# Digital Product Analysis CLI
 
 ## Overview
 
-AI Product Analysis CLI is a powerful command-line tool that leverages advanced language models and a sophisticated graph-based approach to provide comprehensive analyses of AI products. This tool is designed for researchers, product managers, and AI enthusiasts who want to gain deep insights into various AI products and their potential impacts across different domains.
-
-This project is inspired by the STORM (Synthesis of Topic Outlines through Retrieval and Multi-perspective) methodology from the LangChain library, adapted for AI product analysis.
+Digital Product Analysis CLI is a powerful command-line tool that leverages advanced language models and a sophisticated graph-based approach to provide comprehensive analyses of digital products. This tool is designed for researchers, product managers, and technology enthusiasts who want to gain deep insights into various digital products and their potential impacts across different domains.
 
 ## Features
 
-- Generates detailed outlines for AI product analysis
+- Generates detailed outlines for digital product analysis
 - Creates diverse expert personas for multi-perspective analysis
 - Conducts simulated expert interviews using AI
 - Refines analysis outlines based on gathered information
 - Writes comprehensive sections for each aspect of the analysis
 - Produces a final, detailed analysis report in Markdown format
-- Supports analysis of AI products across various domains and use cases
+- Supports analysis of a wide range of digital products across various domains and use cases
 
 ## Installation
 
-You can install the AI Product Analysis CLI globally using npm or pnpm:
+You can install the Digital Product Analysis CLI globally using npm or pnpm:
 
 ```bash
 npm install -g product-analyzer
@@ -31,10 +29,12 @@ pnpm add -g product-analyzer
 After installation, you can use the CLI as follows:
 
 ```bash
-ai-product-analysis analyze "AI Product Name" --output analysis.md
+product-analyzer analyze "Product Name" --type "product_type" --output analysis.md
 ```
 
-This will generate an analysis of the specified AI product, saving the output to the specified file.
+Replace "Product Name" with the name of the digital product you want to analyze, and "product_type" with a relevant category (e.g., "ai", "saas", "mobile_app", "web_platform", etc.).
+
+This will generate an analysis of the specified digital product, saving the output to the specified file.
 
 ## How It Works
 
@@ -90,7 +90,7 @@ To set up the project for development:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/product-analyzer.git
+   git clone https://github.com/bxav/product-analyzer.git
    cd product-analyzer
    ```
 
@@ -108,7 +108,7 @@ To set up the project for development:
 
 4. Run the CLI locally:
    ```bash
-   node dist/main.js analyze "AI Product Name"
+   node dist/main.js analyze "Product Name" --type "product_type"
    ```
 
 ## Contributing

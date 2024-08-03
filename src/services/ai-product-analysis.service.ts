@@ -25,6 +25,7 @@ export class AIProductAnalysisService {
 
   async executeProductAnalysis(
     product: string,
+    productType: string,
     threadId: string,
     outputFile?: string,
   ): Promise<string> {
@@ -33,7 +34,7 @@ export class AIProductAnalysisService {
       const app = workflow.compile({ checkpointer: new MemorySaver() });
 
       const finalState = await app.invoke(
-        { product },
+        { product, productType },
         { configurable: { thread_id: threadId } },
       );
 
@@ -109,6 +110,7 @@ ${keyPoints}
   private createGraphState(): StateGraphArgs<ProductAnalysisState>['channels'] {
     return {
       product: { value: (x, y) => y ?? x, default: () => '' },
+      productType: { value: (x, y) => y ?? x, default: () => 'generic' },
       outline: {
         value: (x, y) => y ?? x,
         default: () => ({ product_name: '', sections: [] }),
