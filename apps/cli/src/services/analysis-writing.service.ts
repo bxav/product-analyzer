@@ -84,7 +84,7 @@ export class AnalysisWritingService {
     let metadata = analysis.response_metadata;
     let remainingSections = [...state.sections];
 
-    while (metadata?.finish_reason === 'length') {
+    while (metadata?.['finish_reason'] === 'length') {
       this.loggingService.info(
         'Analysis truncated. Generating continuation...',
       );

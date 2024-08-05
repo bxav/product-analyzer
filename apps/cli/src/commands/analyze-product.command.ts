@@ -16,7 +16,7 @@ export class AnalyzeProductCommand extends CommandRunner {
     passedParams: string[],
     options?: Record<string, any>,
   ): Promise<void> {
-    if (passedParams.length === 0) {
+    if (passedParams.length === 0 || !passedParams[0]) {
       this.loggingService.error(
         'Error: Please provide a product name to analyze.',
       );
@@ -24,8 +24,8 @@ export class AnalyzeProductCommand extends CommandRunner {
     }
 
     const product = passedParams[0];
-    const productType = options?.type || 'generic';
-    const outputFile = options?.output;
+    const productType = options?.['type'] || 'generic';
+    const outputFile = options?.['output'];
 
     try {
       this.loggingService.info(
@@ -44,7 +44,7 @@ export class AnalyzeProductCommand extends CommandRunner {
       }
     } catch (error) {
       this.loggingService.error('Analysis process encountered errors');
-      this.loggingService.error(`Error details: ${error.message}`);
+      this.loggingService.error(`Error details: ${(error as Error).message}`);
       this.loggingService.warn(
         'The analysis may be incomplete or contain errors.',
       );

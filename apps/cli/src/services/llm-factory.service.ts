@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ChatOpenAI } from '@langchain/openai';
 
 @Injectable()
 export class LLMFactoryService {
-  constructor(private configService: ConfigService) {}
-
   createFastLLM(): ChatOpenAI {
     return new ChatOpenAI({
       temperature: 0,

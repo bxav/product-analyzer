@@ -151,7 +151,7 @@ export class ExpertService {
     state: InterviewState,
   ): Promise<Partial<InterviewState>> {
     const lastQuestion = state.messages[state.messages.length - 1]
-      .content as string;
+      ?.content as string;
     const searchResults = await this.search.performSearch(lastQuestion);
     const formattedResults = this.formatSearchResults(searchResults);
 
@@ -204,7 +204,7 @@ export class ExpertService {
 
   private shouldContinue(state: InterviewState): 'continue' | 'end' {
     const lastMessage = state.messages[state.messages.length - 1];
-    return (lastMessage.content as string)
+    return (lastMessage?.content as string)
       .toLowerCase()
       .includes('thank you') || state.messages.length >= 10
       ? 'end'

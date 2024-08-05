@@ -1,18 +1,17 @@
-name: CI/CD
+name: Turborepo CI/CD
 
 on:
   push:
     branches: [main]
-    tags:
-      - 'v*'
   pull_request:
     branches: [main]
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  test:
+  build-lint-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,16 +27,21 @@ jobs:
           version: 8
       - name: Install dependencies
         run: pnpm install
-      # - name: Run tests
-      #   run: pnpm test
-      # - name: Run linter
-      #   run: pnpm lint
+      - name: Build
+        run: pnpm run build
+      - name: Lint
+        run: pnpm run lint
+      - name: Test
+        run: pnpm run test
 
-  build:
-    needs: test
+  version:
+    needs: build-lint-test
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
@@ -46,49 +50,47 @@ jobs:
           version: 8
       - name: Install dependencies
         run: pnpm install
-      - name: Build
-        run: pnpm build
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
         with:
-          name: dist
-          path: dist
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    steps:
-      - uses: actions/checkout@v3
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+          publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  publish:
-    needs: release
+  # Optional: Create a GitHub Release for tags
+  create-github-release:
+    needs: version
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          registry-url: 'https://registry.npmjs.org'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Install dependencies
-        run: pnpm install
-      - name: Build
-        run: pnpm build
-      - name: Publish to npm
-        run: pnpm publish --no-git-checks
+      - name: Create Release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.ref_name }} \
+            --title "Release ${{ github.ref_name }}" \
+            --generate-notes
+
+  # Placeholder for future desktop app deployment
+  # deploy-desktop:
+  #   needs: version
+  #   runs-on: ubuntu-latest
+  #   if: startsWith(github.ref, 'refs/tags/v')
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     # Add steps to build and deploy desktop app
+
+  # Placeholder for future API deployment
+  # deploy-api:
+  #   needs: version
+  #   runs-on: ubuntu-latest
+  #   if: startsWith(github.ref, 'refs/tags/v')
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     # Add steps to build and deploy containerized API

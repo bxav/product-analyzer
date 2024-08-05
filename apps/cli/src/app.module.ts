@@ -19,7 +19,7 @@ import { LoggingService } from './services/logging.service';
       provide: TavilySearchResults,
       useFactory: (configService: ConfigService) => {
         return new TavilySearchResults({
-          apiKey: configService.get<string>('TAVILY_API_KEY'),
+          apiKey: configService.get<string>('TAVILY_API_KEY') || '',
           maxResults: 3,
         });
       },

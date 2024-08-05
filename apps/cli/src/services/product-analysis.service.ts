@@ -55,8 +55,8 @@ export class ProductAnalysisService {
     } catch (error) {
       this.loggingService.stopSpinner();
       this.loggingService.error('Analysis encountered issues');
-      this.loggingService.error(`Error details: ${error.message}`);
-      if (error.stack) {
+      this.loggingService.error(`Error details: ${(error as Error).message}`);
+      if (error instanceof Error && error.stack) {
         this.loggingService.error(`Stack trace: ${error.stack}`);
       }
       throw error;

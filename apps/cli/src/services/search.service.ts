@@ -15,7 +15,7 @@ export class SearchService {
       return JSON.parse(await this.tavilySearch.invoke(query));
     } catch (error) {
       this.loggingService.warn(
-        `Search failed for query: "${query}". Error: ${error.message}`,
+        `Search failed for query: "${query}". Error: ${(error as Error).message}`,
       );
       return [];
     }
