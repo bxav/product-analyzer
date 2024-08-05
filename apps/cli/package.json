@@ -1,6 +1,6 @@
 {
   "name": "product-analyzer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CLI tool for AI product analysis",
   "bin": {
     "product-analyzer": "./dist/main.js"
