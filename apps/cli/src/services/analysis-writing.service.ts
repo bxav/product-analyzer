@@ -28,7 +28,7 @@ export class AnalysisWritingService {
       ],
       [
         'user',
-        'Product: {product}\nProduct Type: {productType}\nSection: {section}\nExpert interviews: {interviews}\n\nWrite the section content:',
+        'Product: {product}\nProduct Type: {productType}\nSection: {section}\nExpert interviews: {interviews}\n\n\nWrite the section content:',
       ],
     ]);
     const sectionChain = sectionPrompt.pipe(this.longContextLLM);
