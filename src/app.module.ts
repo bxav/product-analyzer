@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
 
-import { AIProductAnalysisService } from './services/ai-product-analysis.service';
+import { ProductAnalysisService } from './services/product-analysis.service';
 import { AnalyzeProductCommand } from './commands/analyze-product.command';
 import { SearchService } from './services/search.service';
 import { ExpertService } from './services/expert.service';
@@ -28,7 +28,7 @@ import { LoggingService } from './services/logging.service';
     ExpertService,
     OutlineService,
     AnalysisWritingService,
-    AIProductAnalysisService,
+    ProductAnalysisService,
     SearchService,
     AnalyzeProductCommand,
     LoggingService,

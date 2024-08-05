@@ -15,7 +15,7 @@ import { OutlineService } from './outline.service';
 import { LoggingService } from './logging.service';
 
 @Injectable()
-export class AIProductAnalysisService {
+export class ProductAnalysisService {
   constructor(
     private readonly expertService: ExpertService,
     private readonly analysisWritingService: AnalysisWritingService,
