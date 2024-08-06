@@ -3,19 +3,21 @@ import { ChatOpenAI } from '@langchain/openai';
 
 @Injectable()
 export class LLMFactoryService {
+  //constructor(private configService: ConfigService) {}
+
   createFastLLM(): ChatOpenAI {
     return new ChatOpenAI({
       temperature: 0,
-      model: 'gpt-35-turbo',
-      //openAIApiKey: this.configService.get<string>('OPENAI_API_KEY'),
+      modelName: 'gpt-3.5-turbo',
+      //openAIApiKey: this.configService.get<string>('OPENAI_API_KEY') as string,
     });
   }
 
   createLongContextLLM(): ChatOpenAI {
     return new ChatOpenAI({
       temperature: 0,
-      model: 'gpt-4o',
-      //openAIApiKey: this.configService.get<string>('OPENAI_API_KEY'),
+      modelName: 'gpt-4',
+      //openAIApiKey: this.configService.get<string>('OPENAI_API_KEY') as string,
     });
   }
 }

@@ -1,7 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { ProductAnalysisService } from '../services/product-analysis.service';
-import { LoggingService } from '../services/logging.service';
+import { ProductAnalysisService } from '@repo/ai';
+import { LoggingService } from '@repo/ai';
 
 @Command({ name: 'analyze', description: 'Analyze a digital product' })
 export class AnalyzeProductCommand extends CommandRunner {

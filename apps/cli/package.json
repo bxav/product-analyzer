@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/bxav/product-analyzer#readme",
   "dependencies": {
+    "@repo/ai": "workspace:*",
     "@langchain/community": "^0.2.19",
     "@langchain/core": "^0.2.16",
     "@langchain/langgraph": "^0.0.28",
