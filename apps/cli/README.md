@@ -9,11 +9,11 @@ You can download the latest version of Product Analyzer CLI using wget or curl. 
 ### Linux
 ```bash
 # Download the CLI
-wget https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-linux
+wget https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-cli-linux
 # Make it executable
-chmod +x product-analyzer-linux
+chmod +x product-analyzer-cli-linux
 # Move it to a directory in your PATH (optional)
-sudo mv product-analyzer-linux /usr/local/bin/product-analyzer
+sudo mv product-analyzer-cli-linux /usr/local/bin/product-analyzer
 ```
 
 ### macOS
@@ -29,12 +29,12 @@ Download the appropriate version:
 
 For Intel-based Macs:
 ```bash
-curl -L https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-macos-x64 -o product-analyzer
+curl -L https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-cli-macos-x64 -o product-analyzer
 ```
 
 For Apple Silicon Macs:
 ```bash
-curl -L https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-macos-arm64 -o product-analyzer
+curl -L https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-cli-macos-arm64 -o product-analyzer
 ```
 
 Then, make it executable:
@@ -47,7 +47,7 @@ sudo mv product-analyzer /usr/local/bin/
 ### Windows
 ```powershell
 # Download the CLI using PowerShell
-Invoke-WebRequest -Uri https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-windows.exe -OutFile product-analyzer.exe
+Invoke-WebRequest -Uri https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-cli-windows.exe -OutFile product-analyzer.exe
 ```
 
 ## Usage
@@ -74,7 +74,7 @@ Replace `your_openai_api_key` and `your_tavily_api_key` with your actual API key
 Here's a complete example of downloading, configuring, and running the Product Analyzer CLI:
 ```bash
 # Download and set up (macOS Apple Silicon example)
-curl -L https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-macos-arm64 -o product-analyzer
+curl -L https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-cli-macos-arm64 -o product-analyzer
 chmod +x product-analyzer
 
 # Create .env file
