@@ -127,7 +127,7 @@ jobs:
   create-release:
     needs: [package, package-macos, version]
     runs-on: ubuntu-latest
-    if: "${{ needs.version.outputs.changed == 'true' }}"
+    if: "${{ needs.version.outputs.changed == 'true' || contains(github.event.head_commit.message, 'chore: update version and changelog') }}"
     steps:
       - uses: actions/checkout@v3
         with:
