@@ -2,69 +2,63 @@
 
 ## Overview
 
-This monorepo contains a suite of tools for comprehensive digital product analysis, leveraging advanced AI models and sophisticated analytical approaches. The project currently includes a powerful CLI tool and lays the groundwork for future desktop and API implementations.
+This monorepo contains the Product Analyzer CLI, a powerful tool leveraging advanced language models and a sophisticated graph-based approach to provide comprehensive analyses of digital products.
 
-## Project Structure
+## Repository Structure
 
 ```
 product-analyzer/
 ├── apps/
 │   └── cli/               # Command-line interface for product analysis
 ├── packages/
-│   ├── core/              # Shared core functionality
-│   ├── ui/                # (Future) Shared UI components
+│   ├── ai/                # Core AI functionality
 │   └── config/            # Shared configuration
 ├── package.json
-├── turbo.json
-└── README.md
+├── pnpm-workspace.yaml
+└── turbo.json
 ```
 
-## Features
-
-- CLI tool for detailed digital product analysis
-- Utilizes advanced language models (OpenAI's GPT)
-- Implements a graph-based approach inspired by STORM methodology
-- Generates expert personas for multi-perspective analysis
-- Conducts simulated expert interviews
-- Produces comprehensive analysis reports in Markdown format
-
-## Getting Started
+## Development Setup
 
 1. Clone the repository:
-   ```
+   ```bash
    git clone https://github.com/bxav/product-analyzer.git
    cd product-analyzer
    ```
 
 2. Install dependencies:
-   ```
+   ```bash
    pnpm install
    ```
 
 3. Build all packages:
-   ```
+   ```bash
    pnpm run build
    ```
 
-4. Run the CLI tool:
-   ```
-   pnpm --filter product-analyzer start
-   ```
-
-## Development
-
-- To run all tests: `pnpm run test`
-- To lint all packages: `pnpm run lint`
-- To start development mode for all packages: `pnpm run dev`
-
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.
+
+### Creating a Release
+
+To create a new release:
+
+1. Make your changes and commit them.
+2. Create a changeset:
+   ```bash
+   pnpm changeset
+   ```
+3. Follow the prompts to specify the type of change (patch, minor, or major) and provide a description.
+4. Commit the generated changeset file.
+5. Push your changes.
+
+Our CI/CD pipeline will automatically create a pull request to bump the version and update the changelog. Once merged, it will create a new release with built executables for all supported platforms.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgements
+## Disclaimer
 
-This project is inspired by and adapts concepts from the STORM (Synthesis of Topic Outlines through Retrieval and Multi-perspective) example in the LangChain library.
+This tool uses AI models and web search capabilities. The accuracy and completeness of the analysis depend on the available information and the performance of the underlying models. Always verify critical information from authoritative sources.

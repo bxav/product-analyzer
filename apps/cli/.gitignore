@@ -1,2 +1,4 @@
 /dist
 /node_modules
+/packaged
+/product-analyzer-cli
