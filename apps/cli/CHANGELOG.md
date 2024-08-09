@@ -1,5 +1,13 @@
 # product-analyzer-cli
 
+## 0.0.5
+
+### Patch Changes
+
+- 38d9504: Make api keys configurable dynamically
+- Updated dependencies [38d9504]
+  - @repo/ai@0.0.3
+
 ## 0.0.4
 
 ### Patch Changes
