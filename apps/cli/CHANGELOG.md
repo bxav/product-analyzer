@@ -1,5 +1,11 @@
 # product-analyzer-cli
 
+## 0.0.4
+
+### Patch Changes
+
+- e52bd1f: Update dependencies and add @inquirer/prompts for CLI prompts
+
 ## 0.0.3
 
 ### Patch Changes
