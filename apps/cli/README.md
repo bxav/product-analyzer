@@ -1,7 +1,7 @@
 # Product Analyzer CLI
 
 ## Overview
-Product Analyzer CLI is a powerful command-line tool that leverages advanced language models and a sophisticated graph-based approach to provide comprehensive analyses of digital products.
+Product Analyzer CLI is a powerful command-line tool that leverages advanced language models and a sophisticated graph-based approach to provide comprehensive analyses of digital products. With the latest updates, it now offers an improved, interactive user experience.
 
 ## Installation
 You can download the latest version of Product Analyzer CLI using wget or curl. Here are instructions for each operating system:
@@ -53,12 +53,26 @@ Invoke-WebRequest -Uri https://github.com/bxav/product-analyzer/releases/latest/
 ## Usage
 After installation, you can use the CLI as follows:
 ```bash
-# On Linux/macOS
-product-analyzer analyze "Product Name" --type "product_type" --output analysis.md
-# On Windows
-.\product-analyzer.exe analyze "Product Name" --type "product_type" --output analysis.md
+product-analyzer analyze [product name] [options]
 ```
-If you didn't move the executable to a directory in your PATH, you'll need to provide the full path to the executable or run it from the directory where it's located.
+
+### Interactive Mode
+If you run the command without arguments, or with partial information, the CLI will prompt you for the missing details:
+
+```bash
+product-analyzer analyze
+```
+
+The CLI will then guide you through a series of questions to gather the necessary information for the analysis.
+
+### Options
+- `--type`: Specify the product type
+- `--output`: Specify the output file for the analysis
+
+Example:
+```bash
+product-analyzer analyze "ChatGPT" --type "ai_assistant" --output chatgpt_analysis.md
+```
 
 ## Configuration
 Before using the CLI, set up your environment variables:
@@ -70,21 +84,12 @@ TAVILY_API_KEY=your_tavily_api_key
 ```
 Replace `your_openai_api_key` and `your_tavily_api_key` with your actual API keys.
 
-## Example
-Here's a complete example of downloading, configuring, and running the Product Analyzer CLI:
-```bash
-# Download and set up (macOS Apple Silicon example)
-curl -L https://github.com/bxav/product-analyzer/releases/latest/download/product-analyzer-cli-macos-arm64 -o product-analyzer
-chmod +x product-analyzer
-
-# Create .env file
-echo "OPENAI_API_KEY=your_openai_api_key" > .env
-echo "TAVILY_API_KEY=your_tavily_api_key" >> .env
-
-# Run the analyzer
-./product-analyzer analyze "ChatGPT" --type "ai_assistant" --output chatgpt_analysis.md
-```
-This will create an analysis of ChatGPT and save it to `chatgpt_analysis.md`.
+## Features
+- Interactive prompts for missing information
+- Progress indicators during analysis
+- Colored output for improved readability
+- Option to save analysis to a file
+- Comprehensive product analysis using AI and web search capabilities
 
 ## Development
 
@@ -95,7 +100,7 @@ To set up the project for development:
    cd apps/cli
    ```
 
-2. Install dependencies (if not already done at the root level):
+2. Install dependencies:
    ```bash
    pnpm install
    ```
@@ -107,8 +112,9 @@ To set up the project for development:
 
 4. Run the CLI locally:
    ```bash
-   node dist/main.js analyze "Product Name" --type "product_type"
+   node dist/main.js analyze
    ```
+
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 

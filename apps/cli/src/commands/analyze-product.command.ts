@@ -1,7 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
-
-import { ProductAnalysisService } from '@repo/ai';
-import { LoggingService } from '@repo/ai';
+import { ProductAnalysisService, LoggingService } from '@repo/ai';
+import { input, confirm } from '@inquirer/prompts';
 
 @Command({ name: 'analyze', description: 'Analyze a digital product' })
 export class AnalyzeProductCommand extends CommandRunner {
@@ -16,21 +15,37 @@ export class AnalyzeProductCommand extends CommandRunner {
     passedParams: string[],
     options?: Record<string, any>,
   ): Promise<void> {
-    if (passedParams.length === 0 || !passedParams[0]) {
-      this.loggingService.error(
-        'Error: Please provide a product name to analyze.',
-      );
-      return;
+    let product = passedParams[0];
+    let productType = options?.['type'];
+    let outputFile = options?.['output'];
+
+    if (!product) {
+      product = await input({
+        message: 'What product would you like to analyze?',
+      });
     }
 
-    const product = passedParams[0];
-    const productType = options?.['type'] || 'generic';
-    const outputFile = options?.['output'];
+    if (!productType) {
+      productType = await input({ message: 'What type of product is it?' });
+    }
+
+    if (!outputFile) {
+      const saveToFile = await confirm({
+        message: 'Would you like to save the analysis to a file?',
+      });
+      if (saveToFile) {
+        outputFile = await input({
+          message: 'Enter the filename to save the analysis:',
+          default: 'analysis.md',
+        });
+      }
+    }
+
+    this.loggingService.startSpinner(
+      `Analyzing ${product} (Type: ${productType})`,
+    );
 
     try {
-      this.loggingService.info(
-        `Starting analysis for: ${product} (Type: ${productType})`,
-      );
       const analysis = await this.analysisService.executeProductAnalysis(
         product,
         productType,
@@ -38,11 +53,16 @@ export class AnalyzeProductCommand extends CommandRunner {
         outputFile,
       );
 
+      this.loggingService.stopSpinner('Analysis completed successfully');
+
       if (!outputFile) {
         this.loggingService.info('\nFull Analysis:');
         this.loggingService.log(analysis);
+      } else {
+        this.loggingService.info(`\nFull analysis saved to ${outputFile}`);
       }
     } catch (error) {
+      this.loggingService.stopSpinner();
       this.loggingService.error('Analysis process encountered errors');
       this.loggingService.error(`Error details: ${(error as Error).message}`);
       this.loggingService.warn(
