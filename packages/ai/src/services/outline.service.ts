@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
 
 import { LLMFactoryService } from '../services/llm-factory.service';
 import { delay } from '../utils';
 import { ProductAnalysisState, productOutlineSchema } from '../types';
 import { LoggingService } from './logging.service';
+import { PromptManagerService } from './prompt-manager.service';
 
 @Injectable()
 export class OutlineService {
@@ -15,6 +15,7 @@ export class OutlineService {
   constructor(
     private readonly llmFactoryService: LLMFactoryService,
     private readonly loggingService: LoggingService,
+    private readonly promptManager: PromptManagerService,
   ) {
     this.fastLLM = this.llmFactoryService.createFastLLM();
     this.longContextLLM = this.llmFactoryService.createLongContextLLM();
@@ -23,13 +24,7 @@ export class OutlineService {
   async generateOutline(
     state: ProductAnalysisState,
   ): Promise<Partial<ProductAnalysisState>> {
-    const outlinePrompt = ChatPromptTemplate.fromMessages([
-      [
-        'system',
-        'You are a product analyst. Write an outline for a detailed analysis of a product. Be comprehensive and specific, considering the product type.',
-      ],
-      ['user', 'Product: {product}\nProduct Type: {productType}'],
-    ]);
+    const outlinePrompt = this.promptManager.getPrompt('outline');
 
     this.loggingService.startSpinner('Generating initial outline');
     const outlineChain = outlinePrompt.pipe(
@@ -46,16 +41,8 @@ export class OutlineService {
   async refineOutline(
     state: ProductAnalysisState,
   ): Promise<Partial<ProductAnalysisState>> {
-    const refinePrompt = ChatPromptTemplate.fromMessages([
-      [
-        'system',
-        'You are refining the outline of a digital product analysis based on expert interviews. Make the outline comprehensive and specific, considering the product type.',
-      ],
-      [
-        'user',
-        'Original outline: {original_outline}\n\nExpert interviews: {interviews}\n\nRefine the outline:',
-      ],
-    ]);
+    const refinePrompt = this.promptManager.getPrompt('refine_outline');
+
     const refineChain = refinePrompt.pipe(
       this.longContextLLM.withStructuredOutput(productOutlineSchema),
     );

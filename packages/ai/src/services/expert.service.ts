@@ -1,6 +1,5 @@
-import { ChatOpenAI } from '@langchain/openai';
 import { Injectable } from '@nestjs/common';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { ChatOpenAI } from '@langchain/openai';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { END, START, StateGraph, StateGraphArgs } from '@langchain/langgraph';
 
@@ -14,6 +13,7 @@ import { delay } from '../utils';
 import { SearchService } from './search.service';
 import { LLMFactoryService } from './llm-factory.service';
 import { LoggingService } from './logging.service';
+import { PromptManagerService } from './prompt-manager.service';
 
 @Injectable()
 export class ExpertService {
@@ -24,6 +24,7 @@ export class ExpertService {
     private readonly llmFactoryService: LLMFactoryService,
     private readonly search: SearchService,
     private readonly loggingService: LoggingService,
+    private readonly promptManager: PromptManagerService,
   ) {
     this.fastLLM = this.llmFactoryService.createFastLLM();
     this.longContextLLM = this.llmFactoryService.createLongContextLLM();
@@ -32,16 +33,7 @@ export class ExpertService {
   async generateExperts(
     state: ProductAnalysisState,
   ): Promise<Partial<ProductAnalysisState>> {
-    const expertPrompt = ChatPromptTemplate.fromMessages([
-      [
-        'system',
-        'Create a diverse group of expert personas to contribute to a digital product analysis. Each persona should have a unique perspective on the product type.',
-      ],
-      [
-        'user',
-        'Product: {product}\nProduct Type: {productType}\n\nGenerate 4-5 expert personas, each with a name, expertise, role, and brief description of their focus:',
-      ],
-    ]);
+    const expertPrompt = this.promptManager.getPrompt('generate_experts');
 
     this.loggingService.startSpinner('Generating expert personas');
     const expertChain = expertPrompt.pipe(
@@ -118,23 +110,7 @@ export class ExpertService {
   private async generateQuestion(
     state: InterviewState,
   ): Promise<Partial<InterviewState>> {
-    const questionPrompt = ChatPromptTemplate.fromMessages([
-      [
-        'system',
-        `You are a digital product analyst with a specific focus. Your persona is:
-        Name: {name}
-        Role: {role}
-        Expertise: {expertise}
-        Description: {description}
-
-        Ask a question to gather information for your digital product analysis. Be specific and relevant to your expertise and the product type.`,
-      ],
-      [
-        'human',
-        'Previous conversation:\n{conversation}\n\nAsk your next question:',
-      ],
-    ]);
-
+    const questionPrompt = this.promptManager.getPrompt('expert_question');
     const questionChain = questionPrompt.pipe(this.fastLLM);
     await delay(1000);
     const response = await questionChain.invoke({
@@ -155,17 +131,7 @@ export class ExpertService {
     const searchResults = await this.search.performSearch(lastQuestion);
     const formattedResults = this.formatSearchResults(searchResults);
 
-    const answerPrompt = ChatPromptTemplate.fromMessages([
-      [
-        'system',
-        'You are an expert answering questions for an AI product analyst. Use the provided search results to inform your answer. Provide informative and accurate answers, including relevant citations where possible. Use the format [1], [2], etc. for citations, referring to the numbered search results.',
-      ],
-      [
-        'human',
-        'Conversation so far:\n{conversation}\n\nSearch results:\n{search_results}\n\nAnswer the last question:',
-      ],
-    ]);
-
+    const answerPrompt = this.promptManager.getPrompt('expert_answer');
     const answerChain = answerPrompt.pipe(this.longContextLLM);
     await delay(1000);
     const response = await answerChain.invoke({

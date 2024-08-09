@@ -20,25 +20,27 @@ import { LoggingService } from './services/logging.service';
 
 import { ConfigService } from '@nestjs/config';
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
+import { PromptManagerService } from './services/prompt-manager.service';
 @Module({
   imports: [ConfigModule.forRoot()],
   providers: [
     {
-        provide: TavilySearchResults,
-        useFactory: (configService: ConfigService) => {
-          return new TavilySearchResults({
-            apiKey: configService.get<string>('TAVILY_API_KEY') || '',
-            maxResults: 3,
-          });
-        },
-        inject: [ConfigService],
+      provide: TavilySearchResults,
+      useFactory: (configService: ConfigService) => {
+        return new TavilySearchResults({
+          apiKey: configService.get<string>('TAVILY_API_KEY') || '',
+          maxResults: 3,
+        });
       },
+      inject: [ConfigService],
+    },
     LLMFactoryService,
     ExpertService,
     OutlineService,
     AnalysisWritingService,
     ProductAnalysisService,
     SearchService,
+    PromptManagerService,
     LoggingService,
   ],
   exports: [
@@ -48,10 +50,10 @@ import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
     AnalysisWritingService,
     ProductAnalysisService,
     SearchService,
+    PromptManagerService,
     LoggingService,
   ],
 })
 class AIModule {}
 
 export { AIModule };
-
