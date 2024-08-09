@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ChatOpenAI } from '@langchain/openai';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { END, START, StateGraph, StateGraphArgs } from '@langchain/langgraph';
 
@@ -17,18 +16,12 @@ import { PromptManagerService } from './prompt-manager.service';
 
 @Injectable()
 export class ExpertService {
-  private readonly fastLLM: ChatOpenAI;
-  private readonly longContextLLM: ChatOpenAI;
-
   constructor(
     private readonly llmFactoryService: LLMFactoryService,
     private readonly search: SearchService,
     private readonly loggingService: LoggingService,
     private readonly promptManager: PromptManagerService,
-  ) {
-    this.fastLLM = this.llmFactoryService.createFastLLM();
-    this.longContextLLM = this.llmFactoryService.createLongContextLLM();
-  }
+  ) {}
 
   async generateExperts(
     state: ProductAnalysisState,
@@ -37,7 +30,9 @@ export class ExpertService {
 
     this.loggingService.startSpinner('Generating expert personas');
     const expertChain = expertPrompt.pipe(
-      this.longContextLLM.withStructuredOutput(groupExpertSchema),
+      this.llmFactoryService
+        .getLongContextLLM()
+        .withStructuredOutput(groupExpertSchema),
     );
     const experts = await expertChain.invoke({
       product: state.product,
@@ -111,7 +106,9 @@ export class ExpertService {
     state: InterviewState,
   ): Promise<Partial<InterviewState>> {
     const questionPrompt = this.promptManager.getPrompt('expert_question');
-    const questionChain = questionPrompt.pipe(this.fastLLM);
+    const questionChain = questionPrompt.pipe(
+      this.llmFactoryService.getFastLLM(),
+    );
     await delay(1000);
     const response = await questionChain.invoke({
       ...state.expert,
@@ -132,7 +129,9 @@ export class ExpertService {
     const formattedResults = this.formatSearchResults(searchResults);
 
     const answerPrompt = this.promptManager.getPrompt('expert_answer');
-    const answerChain = answerPrompt.pipe(this.longContextLLM);
+    const answerChain = answerPrompt.pipe(
+      this.llmFactoryService.getLongContextLLM(),
+    );
     await delay(1000);
     const response = await answerChain.invoke({
       conversation: state.messages

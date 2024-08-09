@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ChatOpenAI } from '@langchain/openai';
 
 import { LLMFactoryService } from './llm-factory.service';
 import { delay } from '../utils';
@@ -9,21 +8,19 @@ import { PromptManagerService } from './prompt-manager.service';
 
 @Injectable()
 export class AnalysisWritingService {
-  private readonly longContextLLM: ChatOpenAI;
-
   constructor(
     private readonly llmFactoryService: LLMFactoryService,
     private readonly loggingService: LoggingService,
     private readonly promptManager: PromptManagerService,
-  ) {
-    this.longContextLLM = this.llmFactoryService.createLongContextLLM();
-  }
+  ) {}
 
   async writeSections(
     state: ProductAnalysisState,
   ): Promise<Partial<ProductAnalysisState>> {
     const sectionPrompt = this.promptManager.getPrompt('write_section');
-    const sectionChain = sectionPrompt.pipe(this.longContextLLM);
+    const sectionChain = sectionPrompt.pipe(
+      this.llmFactoryService.getLongContextLLM(),
+    );
 
     this.loggingService.startSpinner('Writing analysis sections');
     const sections = await Promise.all(
@@ -53,7 +50,9 @@ export class AnalysisWritingService {
     state: ProductAnalysisState,
   ): Promise<Partial<ProductAnalysisState>> {
     const analysisPrompt = this.promptManager.getPrompt('write_full_analysis');
-    const analysisChain = analysisPrompt.pipe(this.longContextLLM);
+    const analysisChain = analysisPrompt.pipe(
+      this.llmFactoryService.getLongContextLLM(),
+    );
 
     this.loggingService.startSpinner('Writing full analysis');
     await delay(1000);
@@ -87,7 +86,9 @@ export class AnalysisWritingService {
       );
       fullAnalysis += '\n' + continuation;
 
-      analysis = await this.longContextLLM.invoke(continuation);
+      analysis = await this.llmFactoryService
+        .getLongContextLLM()
+        .invoke(continuation);
       metadata = analysis.response_metadata;
     }
 
@@ -112,7 +113,9 @@ export class AnalysisWritingService {
   ): Promise<string> {
     const continuationPrompt =
       this.promptManager.getPrompt('continue_analysis');
-    const continuationChain = continuationPrompt.pipe(this.longContextLLM);
+    const continuationChain = continuationPrompt.pipe(
+      this.llmFactoryService.getLongContextLLM(),
+    );
     await delay(1000);
 
     const continuation = await continuationChain.invoke({

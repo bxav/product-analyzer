@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ChatOpenAI } from '@langchain/openai';
 
 import { LLMFactoryService } from '../services/llm-factory.service';
 import { delay } from '../utils';
@@ -9,17 +8,11 @@ import { PromptManagerService } from './prompt-manager.service';
 
 @Injectable()
 export class OutlineService {
-  private readonly fastLLM: ChatOpenAI;
-  private readonly longContextLLM: ChatOpenAI;
-
   constructor(
     private readonly llmFactoryService: LLMFactoryService,
     private readonly loggingService: LoggingService,
     private readonly promptManager: PromptManagerService,
-  ) {
-    this.fastLLM = this.llmFactoryService.createFastLLM();
-    this.longContextLLM = this.llmFactoryService.createLongContextLLM();
-  }
+  ) {}
 
   async generateOutline(
     state: ProductAnalysisState,
@@ -28,7 +21,9 @@ export class OutlineService {
 
     this.loggingService.startSpinner('Generating initial outline');
     const outlineChain = outlinePrompt.pipe(
-      this.fastLLM.withStructuredOutput(productOutlineSchema),
+      this.llmFactoryService
+        .getFastLLM()
+        .withStructuredOutput(productOutlineSchema),
     );
     const outline = await outlineChain.invoke({
       product: state.product,
@@ -44,7 +39,9 @@ export class OutlineService {
     const refinePrompt = this.promptManager.getPrompt('refine_outline');
 
     const refineChain = refinePrompt.pipe(
-      this.longContextLLM.withStructuredOutput(productOutlineSchema),
+      this.llmFactoryService
+        .getLongContextLLM()
+        .withStructuredOutput(productOutlineSchema),
     );
     this.loggingService.startSpinner(
       'Refining outline based on expert interviews',

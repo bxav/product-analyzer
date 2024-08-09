@@ -17,23 +17,10 @@ import { OutlineService } from './services/outline.service';
 import { ProductAnalysisService } from './services/product-analysis.service';
 import { SearchService } from './services/search.service';
 import { LoggingService } from './services/logging.service';
-
-import { ConfigService } from '@nestjs/config';
-import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
 import { PromptManagerService } from './services/prompt-manager.service';
 @Module({
   imports: [ConfigModule.forRoot()],
   providers: [
-    {
-      provide: TavilySearchResults,
-      useFactory: (configService: ConfigService) => {
-        return new TavilySearchResults({
-          apiKey: configService.get<string>('TAVILY_API_KEY') || '',
-          maxResults: 3,
-        });
-      },
-      inject: [ConfigService],
-    },
     LLMFactoryService,
     ExpertService,
     OutlineService,

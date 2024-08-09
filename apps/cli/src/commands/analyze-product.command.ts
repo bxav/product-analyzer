@@ -1,12 +1,14 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { ProductAnalysisService, LoggingService } from '@repo/ai';
-import { input, confirm } from '@inquirer/prompts';
+import { input, confirm, password } from '@inquirer/prompts';
+import { ConfigService } from '@nestjs/config';
 
 @Command({ name: 'analyze', description: 'Analyze a digital product' })
 export class AnalyzeProductCommand extends CommandRunner {
   constructor(
     private readonly analysisService: ProductAnalysisService,
     private readonly loggingService: LoggingService,
+    private readonly configService: ConfigService,
   ) {
     super();
   }
@@ -15,6 +17,10 @@ export class AnalyzeProductCommand extends CommandRunner {
     passedParams: string[],
     options?: Record<string, any>,
   ): Promise<void> {
+    await this.ensureApiKey('OPENAI_API_KEY', 'OpenAI');
+
+    await this.ensureApiKey('TAVILY_API_KEY', 'Tavily');
+
     let product = passedParams[0];
     let productType = options?.['type'];
     let outputFile = options?.['output'];
@@ -73,6 +79,19 @@ export class AnalyzeProductCommand extends CommandRunner {
           `Check ${outputFile} for any partial results.`,
         );
       }
+    }
+  }
+
+  private async ensureApiKey(
+    envKey: string,
+    serviceName: string,
+  ): Promise<void> {
+    let apiKey = this.configService.get<string>(envKey);
+    if (!apiKey) {
+      apiKey = await password({
+        message: `Please enter your ${serviceName} API key:`,
+      });
+      process.env[envKey] = apiKey;
     }
   }
 
