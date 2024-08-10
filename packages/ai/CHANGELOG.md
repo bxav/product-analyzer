@@ -1,5 +1,11 @@
 # @repo/ai
 
+## 0.0.4
+
+### Patch Changes
+
+- fb382a5: Remove nestjs dependencies from the ai package
+
 ## 0.0.3
 
 ### Patch Changes

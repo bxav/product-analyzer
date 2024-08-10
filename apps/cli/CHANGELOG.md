@@ -1,5 +1,13 @@
 # product-analyzer-cli
 
+## 0.0.6
+
+### Patch Changes
+
+- fb382a5: Remove nestjs dependencies from the ai package
+- Updated dependencies [fb382a5]
+  - @repo/ai@0.0.4
+
 ## 0.0.5
 
 ### Patch Changes
