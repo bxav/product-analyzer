@@ -1,5 +1,13 @@
 # product-analyzer-cli
 
+## 0.0.7
+
+### Patch Changes
+
+- 8415565: Refactor ai and cli package (new service structure)
+- Updated dependencies [8415565]
+  - @repo/ai@0.0.5
+
 ## 0.0.6
 
 ### Patch Changes
