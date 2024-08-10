@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import {
   StateGraph,
   MemorySaver,
@@ -7,25 +6,24 @@ import {
   END,
 } from '@langchain/langgraph';
 
-import { ExpertService } from './expert.service';
+import { ExpertManager } from './expert-manager';
 import { ProductAnalysisState } from '../types';
-import { AnalysisWritingService } from './analysis-writing.service';
-import { OutlineService } from './outline.service';
-import { LoggingService } from './logging.service';
+import { AnalysisWriter } from './analysis-writer';
+import { OutlineGenerator } from './outline-generator';
+import { Logger } from '../core/logger';
 
-export class ProductAnalysisService {
+export class ProductAnalyzer {
   constructor(
-    private readonly expertService: ExpertService,
-    private readonly analysisWritingService: AnalysisWritingService,
-    private readonly outlineService: OutlineService,
-    private readonly loggingService: LoggingService,
+    private readonly expertManager: ExpertManager,
+    private readonly analysisWriter: AnalysisWriter,
+    private readonly outlineGenerator: OutlineGenerator,
+    private readonly logger: Logger,
   ) {}
 
   async executeProductAnalysis(
     product: string,
     productType: string,
     threadId: string,
-    outputFile?: string,
   ): Promise<string> {
     try {
       const workflow = this.createWorkflow();
@@ -36,26 +34,21 @@ export class ProductAnalysisService {
         { configurable: { thread_id: threadId } },
       );
 
-      this.loggingService.success('\nAnalysis completed successfully\n');
+      this.logger.success('\nAnalysis completed successfully\n');
 
       const summary = this.generateSummary(finalState);
       const fullAnalysis = finalState.analysis;
 
-      this.loggingService.info('\nAnalysis Summary:');
-      this.loggingService.log(summary);
-
-      if (outputFile) {
-        fs.writeFileSync(outputFile, fullAnalysis);
-        this.loggingService.info(`\nFull analysis saved to ${outputFile}`);
-      }
+      this.logger.info('\nAnalysis Summary:');
+      this.logger.log(summary);
 
       return fullAnalysis;
     } catch (error) {
-      this.loggingService.stopSpinner();
-      this.loggingService.error('Analysis encountered issues');
-      this.loggingService.error(`Error details: ${(error as Error).message}`);
+      this.logger.stopSpinner();
+      this.logger.error('Analysis encountered issues');
+      this.logger.error(`Error details: ${(error as Error).message}`);
       if (error instanceof Error && error.stack) {
-        this.loggingService.error(`Stack trace: ${error.stack}`);
+        this.logger.error(`Stack trace: ${error.stack}`);
       }
       throw error;
     }
@@ -79,22 +72,22 @@ ${keyPoints}
       channels: this.createGraphState(),
     })
       .addNode('generate_outline', (state) =>
-        this.outlineService.generateOutline(state),
+        this.outlineGenerator.generateOutline(state),
       )
       .addNode('generate_experts', (state) =>
-        this.expertService.generateExperts(state),
+        this.expertManager.generateExperts(state),
       )
       .addNode('conduct_interviews', (state) =>
-        this.expertService.conductInterviews(state),
+        this.expertManager.conductInterviews(state),
       )
       .addNode('refine_outline', (state) =>
-        this.outlineService.refineOutline(state),
+        this.outlineGenerator.refineOutline(state),
       )
       .addNode('write_sections', (state) =>
-        this.analysisWritingService.writeSections(state),
+        this.analysisWriter.writeSections(state),
       )
       .addNode('write_analysis', (state) =>
-        this.analysisWritingService.writeAnalysis(state),
+        this.analysisWriter.writeAnalysis(state),
       )
       .addEdge(START, 'generate_outline')
       .addEdge('generate_outline', 'generate_experts')

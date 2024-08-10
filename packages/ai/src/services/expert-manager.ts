@@ -8,17 +8,17 @@ import {
   ProductAnalysisState,
 } from '../types';
 import { delay } from '../utils';
-import { SearchService } from './search.service';
-import { LLMFactoryService } from './llm-factory.service';
-import { LoggingService } from './logging.service';
-import { PromptManagerService } from './prompt-manager.service';
+import { SearchEngine } from './search-engine';
+import { LLMFactory } from './llm-factory';
+import { PromptManager } from './prompt-manager';
+import { Logger } from '../core/logger';
 
-export class ExpertService {
+export class ExpertManager {
   constructor(
-    private readonly llmFactoryService: LLMFactoryService,
-    private readonly search: SearchService,
-    private readonly loggingService: LoggingService,
-    private readonly promptManager: PromptManagerService,
+    private readonly llmFactory: LLMFactory,
+    private readonly searchEngine: SearchEngine,
+    private readonly logger: Logger,
+    private readonly promptManager: PromptManager,
   ) {}
 
   async generateExperts(
@@ -26,9 +26,9 @@ export class ExpertService {
   ): Promise<Partial<ProductAnalysisState>> {
     const expertPrompt = this.promptManager.getPrompt('generate_experts');
 
-    this.loggingService.startSpinner('Generating expert personas');
+    this.logger.startSpinner('Generating expert personas');
     const expertChain = expertPrompt.pipe(
-      this.llmFactoryService
+      this.llmFactory
         .getLongContextLLM()
         .withStructuredOutput(groupExpertSchema),
     );
@@ -36,7 +36,7 @@ export class ExpertService {
       product: state.product,
       productType: state.productType,
     });
-    this.loggingService.stopSpinner('Expert personas generated successfully');
+    this.logger.stopSpinner('Expert personas generated successfully');
     return { experts: experts.experts };
   }
 
@@ -44,7 +44,7 @@ export class ExpertService {
     state: ProductAnalysisState,
   ): Promise<Partial<ProductAnalysisState>> {
     const interviewGraph = this.createInterviewGraph();
-    this.loggingService.startSpinner('Conducting expert interviews');
+    this.logger.startSpinner('Conducting expert interviews');
     const interviewResults = await Promise.all(
       state.experts.map((expert) => {
         return this.conductSingleInterview(
@@ -54,9 +54,7 @@ export class ExpertService {
         );
       }),
     );
-    this.loggingService.stopSpinner(
-      'All expert interviews completed successfully',
-    );
+    this.logger.stopSpinner('All expert interviews completed successfully');
     return { interview_results: interviewResults };
   }
 
@@ -104,9 +102,7 @@ export class ExpertService {
     state: InterviewState,
   ): Promise<Partial<InterviewState>> {
     const questionPrompt = this.promptManager.getPrompt('expert_question');
-    const questionChain = questionPrompt.pipe(
-      this.llmFactoryService.getFastLLM(),
-    );
+    const questionChain = questionPrompt.pipe(this.llmFactory.getFastLLM());
     await delay(1000);
     const response = await questionChain.invoke({
       ...state.expert,
@@ -123,13 +119,11 @@ export class ExpertService {
   ): Promise<Partial<InterviewState>> {
     const lastQuestion = state.messages[state.messages.length - 1]
       ?.content as string;
-    const searchResults = await this.search.performSearch(lastQuestion);
+    const searchResults = await this.searchEngine.performSearch(lastQuestion);
     const formattedResults = this.formatSearchResults(searchResults);
 
     const answerPrompt = this.promptManager.getPrompt('expert_answer');
-    const answerChain = answerPrompt.pipe(
-      this.llmFactoryService.getLongContextLLM(),
-    );
+    const answerChain = answerPrompt.pipe(this.llmFactory.getLongContextLLM());
     await delay(1000);
     const response = await answerChain.invoke({
       conversation: state.messages

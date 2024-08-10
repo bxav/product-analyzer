@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AnalyzeProductCommand } from './commands/analyze-product.command';
-
-import { ProductAnalyzerBuilder } from '@repo/ai';
 import { ConfigModule } from '@nestjs/config';
+
+import { AnalyzeProductCommand } from './commands/analyze-product.command';
+import { CLILogger } from './services/cli-logger.service';
 
 @Module({
   imports: [
@@ -10,11 +10,6 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
     }),
   ],
-  providers: [AnalyzeProductCommand, {
-    provide: 'PRODUCT_ANALYZER',
-    useFactory: () => {
-      return new ProductAnalyzerBuilder().build();
-    },
-  },],
+  providers: [AnalyzeProductCommand, CLILogger],
 })
 export class AppModule {}

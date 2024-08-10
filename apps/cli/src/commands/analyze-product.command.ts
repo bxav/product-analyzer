@@ -1,30 +1,37 @@
+import * as fs from 'fs';
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { ProductAnalysisService, LoggingService } from '@repo/ai';
 import { input, confirm, password } from '@inquirer/prompts';
 import { ConfigService } from '@nestjs/config';
-import { Inject } from '@nestjs/common';
+
+import { ProductAnalyzerBuilder, ProductAnalyzerConfig } from '@repo/ai';
+
+import { CLILogger } from '../services/cli-logger.service';
 
 @Command({ name: 'analyze', description: 'Analyze a digital product' })
 export class AnalyzeProductCommand extends CommandRunner {
-  private readonly loggingService: LoggingService;
-
   constructor(
-    @Inject('PRODUCT_ANALYZER')
-    private readonly analysisService: ProductAnalysisService,
     private readonly configService: ConfigService,
+    private readonly logger: CLILogger,
   ) {
     super();
-    this.loggingService = new LoggingService();
   }
 
   async run(
     passedParams: string[],
     options?: Record<string, any>,
   ): Promise<void> {
-    if (!this.configService.get<string>('AZURE_OPENAI_API_KEY'))
-      await this.ensureApiKey('OPENAI_API_KEY', 'OpenAI');
+    const config: ProductAnalyzerConfig = {};
 
-    await this.ensureApiKey('TAVILY_API_KEY', 'Tavily');
+    if (!this.configService.get<string>('AZURE_OPENAI_API_KEY')) {
+      config.openAIApiKey = await this.ensureApiKey('OPENAI_API_KEY', 'OpenAI');
+    }
+
+    config.tavilyApiKey = await this.ensureApiKey('TAVILY_API_KEY', 'Tavily');
+
+    const productAnalyzer = new ProductAnalyzerBuilder(
+      config,
+      this.logger,
+    ).build();
 
     let product = passedParams[0];
     let productType = options?.['type'];
@@ -52,37 +59,33 @@ export class AnalyzeProductCommand extends CommandRunner {
       }
     }
 
-    this.loggingService.startSpinner(
-      `Analyzing ${product} (Type: ${productType})`,
-    );
+    this.logger.startSpinner(`Analyzing ${product} (Type: ${productType})`);
 
     try {
-      const analysis = await this.analysisService.executeProductAnalysis(
+      const analysis = await productAnalyzer.executeProductAnalysis(
         product,
         productType,
         'thread-id',
-        outputFile,
       );
 
-      this.loggingService.stopSpinner('Analysis completed successfully');
+      this.logger.stopSpinner('Analysis completed successfully');
 
       if (!outputFile) {
-        this.loggingService.info('\nFull Analysis:');
-        this.loggingService.log(analysis);
+        this.logger.info('\nFull Analysis:');
+        this.logger.log(analysis);
       } else {
-        this.loggingService.info(`\nFull analysis saved to ${outputFile}`);
+        fs.writeFileSync(outputFile, analysis);
+        this.logger.info(`\nFull analysis saved to ${outputFile}`);
+
+        this.logger.stopSpinner();
       }
     } catch (error) {
-      this.loggingService.stopSpinner();
-      this.loggingService.error('Analysis process encountered errors');
-      this.loggingService.error(`Error details: ${(error as Error).message}`);
-      this.loggingService.warn(
-        'The analysis may be incomplete or contain errors.',
-      );
+      this.logger.stopSpinner();
+      this.logger.error('Analysis process encountered errors');
+      this.logger.error(`Error details: ${(error as Error).message}`);
+      this.logger.warn('The analysis may be incomplete or contain errors.');
       if (outputFile) {
-        this.loggingService.info(
-          `Check ${outputFile} for any partial results.`,
-        );
+        this.logger.info(`Check ${outputFile} for any partial results.`);
       }
     }
   }
@@ -90,14 +93,14 @@ export class AnalyzeProductCommand extends CommandRunner {
   private async ensureApiKey(
     envKey: string,
     serviceName: string,
-  ): Promise<void> {
+  ): Promise<string> {
     let apiKey = this.configService.get<string>(envKey);
     if (!apiKey) {
       apiKey = await password({
         message: `Please enter your ${serviceName} API key:`,
       });
-      process.env[envKey] = apiKey;
     }
+    return apiKey;
   }
 
   @Option({

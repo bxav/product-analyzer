@@ -1,14 +1,14 @@
-import { LLMFactoryService } from './llm-factory.service';
+import { LLMFactory } from './llm-factory';
 import { delay } from '../utils';
 import { ProductAnalysisState } from '../types';
-import { LoggingService } from './logging.service';
-import { PromptManagerService } from './prompt-manager.service';
+import { PromptManager } from './prompt-manager';
+import { Logger } from '../core/logger';
 
-export class AnalysisWritingService {
+export class AnalysisWriter {
   constructor(
-    private readonly llmFactoryService: LLMFactoryService,
-    private readonly loggingService: LoggingService,
-    private readonly promptManager: PromptManagerService,
+    private readonly llmFactory: LLMFactory,
+    private readonly logger: Logger,
+    private readonly promptManager: PromptManager,
   ) {}
 
   async writeSections(
@@ -16,16 +16,14 @@ export class AnalysisWritingService {
   ): Promise<Partial<ProductAnalysisState>> {
     const sectionPrompt = this.promptManager.getPrompt('write_section');
     const sectionChain = sectionPrompt.pipe(
-      this.llmFactoryService.getLongContextLLM(),
+      this.llmFactory.getLongContextLLM(),
     );
 
-    this.loggingService.startSpinner('Writing analysis sections');
+    this.logger.startSpinner('Writing analysis sections');
     const sections = await Promise.all(
       state.outline.sections.map(async (section) => {
         await delay(1000);
-        this.loggingService.updateSpinner(
-          `Writing section: ${section.section_title}`,
-        );
+        this.logger.updateSpinner(`Writing section: ${section.section_title}`);
         const content = await sectionChain.invoke({
           product: state.product,
           productType: state.productType,
@@ -38,7 +36,7 @@ export class AnalysisWritingService {
         };
       }),
     );
-    this.loggingService.stopSpinner('All sections written successfully');
+    this.logger.stopSpinner('All sections written successfully');
 
     return { sections };
   }
@@ -48,10 +46,10 @@ export class AnalysisWritingService {
   ): Promise<Partial<ProductAnalysisState>> {
     const analysisPrompt = this.promptManager.getPrompt('write_full_analysis');
     const analysisChain = analysisPrompt.pipe(
-      this.llmFactoryService.getLongContextLLM(),
+      this.llmFactory.getLongContextLLM(),
     );
 
-    this.loggingService.startSpinner('Writing full analysis');
+    this.logger.startSpinner('Writing full analysis');
     await delay(1000);
     let analysis = await analysisChain.invoke({
       product: state.product,
@@ -64,9 +62,7 @@ export class AnalysisWritingService {
     let remainingSections = [...state.sections];
 
     while (metadata?.['finish_reason'] === 'length') {
-      this.loggingService.info(
-        'Analysis truncated. Generating continuation...',
-      );
+      this.logger.info('Analysis truncated. Generating continuation...');
 
       const coveredSections = this.identifyCoveredSections(
         fullAnalysis,
@@ -83,13 +79,11 @@ export class AnalysisWritingService {
       );
       fullAnalysis += '\n' + continuation;
 
-      analysis = await this.llmFactoryService
-        .getLongContextLLM()
-        .invoke(continuation);
+      analysis = await this.llmFactory.getLongContextLLM().invoke(continuation);
       metadata = analysis.response_metadata;
     }
 
-    this.loggingService.stopSpinner('Full analysis written successfully');
+    this.logger.stopSpinner('Full analysis written successfully');
 
     return { analysis: fullAnalysis };
   }
@@ -111,7 +105,7 @@ export class AnalysisWritingService {
     const continuationPrompt =
       this.promptManager.getPrompt('continue_analysis');
     const continuationChain = continuationPrompt.pipe(
-      this.llmFactoryService.getLongContextLLM(),
+      this.llmFactory.getLongContextLLM(),
     );
     await delay(1000);
 

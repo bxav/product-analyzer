@@ -1,6 +1,6 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 
-export class PromptManagerService {
+export class PromptManager {
   private prompts: Map<string, ChatPromptTemplate> = new Map();
 
   constructor() {
