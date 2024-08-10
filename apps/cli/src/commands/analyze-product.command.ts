@@ -2,15 +2,19 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { ProductAnalysisService, LoggingService } from '@repo/ai';
 import { input, confirm, password } from '@inquirer/prompts';
 import { ConfigService } from '@nestjs/config';
+import { Inject } from '@nestjs/common';
 
 @Command({ name: 'analyze', description: 'Analyze a digital product' })
 export class AnalyzeProductCommand extends CommandRunner {
+  private readonly loggingService: LoggingService;
+
   constructor(
+    @Inject('PRODUCT_ANALYZER')
     private readonly analysisService: ProductAnalysisService,
-    private readonly loggingService: LoggingService,
     private readonly configService: ConfigService,
   ) {
     super();
+    this.loggingService = new LoggingService();
   }
 
   async run(

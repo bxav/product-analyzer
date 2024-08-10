@@ -1,13 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
-//import { ConfigService } from '@nestjs/config';
 
-@Injectable()
 export class LLMFactoryService {
   private fastLLM?: ChatOpenAI;
   private longContextLLM?: ChatOpenAI;
-
-  //constructor(private configService: ConfigService) {}
 
   getFastLLM(): ChatOpenAI {
     if (!this.fastLLM) {
@@ -29,7 +24,7 @@ export class LLMFactoryService {
     return new ChatOpenAI({
       temperature: 0,
       modelName: 'gpt-4o-mini',
-      //openAIApiKey: this.configService.get<string>('OPENAI_API_KEY') as string,
+      //openAIApiKey: process.env['OPENAI_API_KEY'] || '',
     });
   }
 
@@ -37,7 +32,7 @@ export class LLMFactoryService {
     return new ChatOpenAI({
       temperature: 0,
       modelName: 'gpt-4o',
-      //openAIApiKey: this.configService.get<string>('OPENAI_API_KEY') as string,
+      //openAIApiKey: process.env['OPENAI_API_KEY'] || '',
     });
   }
 }

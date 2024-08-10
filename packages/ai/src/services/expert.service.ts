@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { END, START, StateGraph, StateGraphArgs } from '@langchain/langgraph';
 
@@ -14,7 +13,6 @@ import { LLMFactoryService } from './llm-factory.service';
 import { LoggingService } from './logging.service';
 import { PromptManagerService } from './prompt-manager.service';
 
-@Injectable()
 export class ExpertService {
   constructor(
     private readonly llmFactoryService: LLMFactoryService,

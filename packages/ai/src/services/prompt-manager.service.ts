@@ -1,7 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 
-@Injectable()
 export class PromptManagerService {
   private prompts: Map<string, ChatPromptTemplate> = new Map();
 

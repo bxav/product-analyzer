@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import { Injectable } from '@nestjs/common';
 import {
   StateGraph,
   MemorySaver,
@@ -14,7 +13,6 @@ import { AnalysisWritingService } from './analysis-writing.service';
 import { OutlineService } from './outline.service';
 import { LoggingService } from './logging.service';
 
-@Injectable()
 export class ProductAnalysisService {
   constructor(
     private readonly expertService: ExpertService,

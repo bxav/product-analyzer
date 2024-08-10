@@ -7,40 +7,4 @@ export * from './services/search.service';
 export * from './services/logging.service';
 export * from './types';
 export * from './utils';
-
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { AnalysisWritingService } from './services/analysis-writing.service';
-import { ExpertService } from './services/expert.service';
-import { LLMFactoryService } from './services/llm-factory.service';
-import { OutlineService } from './services/outline.service';
-import { ProductAnalysisService } from './services/product-analysis.service';
-import { SearchService } from './services/search.service';
-import { LoggingService } from './services/logging.service';
-import { PromptManagerService } from './services/prompt-manager.service';
-@Module({
-  imports: [ConfigModule.forRoot()],
-  providers: [
-    LLMFactoryService,
-    ExpertService,
-    OutlineService,
-    AnalysisWritingService,
-    ProductAnalysisService,
-    SearchService,
-    PromptManagerService,
-    LoggingService,
-  ],
-  exports: [
-    LLMFactoryService,
-    ExpertService,
-    OutlineService,
-    AnalysisWritingService,
-    ProductAnalysisService,
-    SearchService,
-    PromptManagerService,
-    LoggingService,
-  ],
-})
-class AIModule {}
-
-export { AIModule };
+export * from './builder';

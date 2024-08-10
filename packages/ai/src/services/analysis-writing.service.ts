@@ -1,12 +1,9 @@
-import { Injectable } from '@nestjs/common';
-
 import { LLMFactoryService } from './llm-factory.service';
 import { delay } from '../utils';
 import { ProductAnalysisState } from '../types';
 import { LoggingService } from './logging.service';
 import { PromptManagerService } from './prompt-manager.service';
 
-@Injectable()
 export class AnalysisWritingService {
   constructor(
     private readonly llmFactoryService: LLMFactoryService,

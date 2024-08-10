@@ -1,15 +1,8 @@
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
-import { Injectable } from '@nestjs/common';
-
 import { LoggingService } from './logging.service';
-import { ConfigService } from '@nestjs/config';
 
-@Injectable()
 export class SearchService {
-  constructor(
-    private configService: ConfigService,
-    private readonly loggingService: LoggingService,
-  ) {}
+  constructor(private readonly loggingService: LoggingService) {}
 
   public async performSearch(query: string): Promise<any[]> {
     try {
@@ -24,7 +17,7 @@ export class SearchService {
 
   private getTavilySearch() {
     return new TavilySearchResults({
-      apiKey: this.configService.get<string>('TAVILY_API_KEY') || '',
+      apiKey: process.env['TAVILY_API_KEY'] || '',
       maxResults: 3,
     });
   }

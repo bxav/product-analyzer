@@ -5,32 +5,29 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "build": "tsc",
-        "clean": "rm -rf dist",
-        "dev": "tsc -w",
-        "lint": "eslint \"src/**/*.ts\"",
-        "test": "jest"
+      "build": "tsc",
+      "clean": "rm -rf dist",
+      "dev": "tsc -w",
+      "lint": "eslint \"src/**/*.ts\"",
+      "test": "jest"
     },
     "dependencies": {
-        "@langchain/core": "^0.2.16",
-        "@langchain/langgraph": "^0.0.28",
-        "@langchain/openai": "^0.2.2",
-        "@nestjs/common": "^10.3.10",
-        "@nestjs/config": "^3.2.3",
-        "@langchain/community": "0.2.19",
-        "chalk": "4",
-        "cli-spinner": "^0.2.10",
-        "zod": "^3.23.8"
+      "@langchain/core": "^0.2.16",
+      "@langchain/langgraph": "^0.0.28",
+      "@langchain/openai": "^0.2.2",
+      "@langchain/community": "0.2.19",
+      "chalk": "4",
+      "cli-spinner": "^0.2.10",
+      "zod": "^3.23.8"
     },
     "devDependencies": {
-        "@repo/config": "workspace:*",
-        "@types/cli-spinner": "^0.2.3",
-        "@types/jest": "^29.5.2",
-        "@types/node": "^20.14.11",
-        "eslint": "^8.42.0",
-        "jest": "^29.5.0",
-        "ts-jest": "^29.1.0",
-        "tsup": "^8.0.2",
-        "typescript": "^5.5.3"
+      "@repo/config": "workspace:*",
+      "@types/cli-spinner": "^0.2.3",
+      "@types/jest": "^29.5.2",
+      "@types/node": "^20.14.11",
+      "eslint": "^8.42.0",
+      "jest": "^29.5.0",
+      "ts-jest": "^29.1.0",
+      "typescript": "^5.5.3"
     }
-}
+  }

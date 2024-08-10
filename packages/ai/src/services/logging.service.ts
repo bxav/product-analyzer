@@ -1,8 +1,6 @@
-import { Injectable } from '@nestjs/common';
 import chalk from 'chalk';
 import { Spinner } from 'cli-spinner';
 
-@Injectable()
 export class LoggingService {
   private spinner: Spinner | null = null;
 
