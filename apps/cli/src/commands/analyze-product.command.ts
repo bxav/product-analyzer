@@ -17,7 +17,8 @@ export class AnalyzeProductCommand extends CommandRunner {
     passedParams: string[],
     options?: Record<string, any>,
   ): Promise<void> {
-    await this.ensureApiKey('OPENAI_API_KEY', 'OpenAI');
+    if (!this.configService.get<string>('AZURE_OPENAI_API_KEY'))
+      await this.ensureApiKey('OPENAI_API_KEY', 'OpenAI');
 
     await this.ensureApiKey('TAVILY_API_KEY', 'Tavily');
 
