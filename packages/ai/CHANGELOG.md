@@ -1,5 +1,11 @@
 # @repo/ai
 
+## 0.0.7
+
+### Patch Changes
+
+- e5e0c8d: Fix adding document content when creating a reference
+
 ## 0.0.6
 
 ### Patch Changes
