@@ -1,5 +1,12 @@
 # product-analyzer-cli
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies [fab6915]
+  - @repo/ai@0.0.6
+
 ## 0.0.7
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @repo/ai
 
+## 0.0.6
+
+### Patch Changes
+
+- fab6915: Add RAG on research reference to the agent
+
 ## 0.0.5
 
 ### Patch Changes
