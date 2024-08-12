@@ -1,3 +1,5 @@
+import { OpenAIEmbeddings } from '@langchain/openai';
+
 import { LLMFactory } from './services/llm-factory';
 import { Logger } from './core/logger';
 import { ProductAnalyzer } from './services/product-analyzer';
@@ -6,6 +8,7 @@ import { SearchEngine } from './services/search-engine';
 import { ExpertManager } from './services/expert-manager';
 import { OutlineGenerator } from './services/outline-generator';
 import { AnalysisWriter } from './services/analysis-writer';
+import { ReferenceIndexer } from './services/reference-indexer';
 
 export interface ProductAnalyzerConfig {
   openAIApiKey?: string;
@@ -43,16 +46,21 @@ export class ProductAnalyzerBuilder {
       promptManager,
     );
 
+    const embeddings = new OpenAIEmbeddings();
+    const referenceIndexer = new ReferenceIndexer(embeddings);
+
     const analysisWriter = new AnalysisWriter(
       llmFactory,
       this.logger,
       promptManager,
+      referenceIndexer,
     );
 
     return new ProductAnalyzer(
       expertManager,
       analysisWriter,
       outlineGenerator,
+      referenceIndexer,
       this.logger,
     );
   }

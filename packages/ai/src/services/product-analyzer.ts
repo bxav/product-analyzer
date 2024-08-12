@@ -11,12 +11,14 @@ import { ProductAnalysisState } from '../types';
 import { AnalysisWriter } from './analysis-writer';
 import { OutlineGenerator } from './outline-generator';
 import { Logger } from '../core/logger';
+import { ReferenceIndexer } from './reference-indexer';
 
 export class ProductAnalyzer {
   constructor(
     private readonly expertManager: ExpertManager,
     private readonly analysisWriter: AnalysisWriter,
     private readonly outlineGenerator: OutlineGenerator,
+    private readonly referenceIndexer: ReferenceIndexer,
     private readonly logger: Logger,
   ) {}
 
@@ -83,6 +85,9 @@ ${keyPoints}
       .addNode('refine_outline', (state) =>
         this.outlineGenerator.refineOutline(state),
       )
+      .addNode('index_references', (state) =>
+        this.referenceIndexer.indexReferences(state),
+      )
       .addNode('write_sections', (state) =>
         this.analysisWriter.writeSections(state),
       )
@@ -93,7 +98,8 @@ ${keyPoints}
       .addEdge('generate_outline', 'generate_experts')
       .addEdge('generate_experts', 'conduct_interviews')
       .addEdge('conduct_interviews', 'refine_outline')
-      .addEdge('refine_outline', 'write_sections')
+      .addEdge('refine_outline', 'index_references')
+      .addEdge('index_references', 'write_sections')
       .addEdge('write_sections', 'write_analysis')
       .addEdge('write_analysis', END);
   }

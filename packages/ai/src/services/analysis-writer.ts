@@ -3,12 +3,14 @@ import { delay } from '../utils';
 import { ProductAnalysisState } from '../types';
 import { PromptManager } from './prompt-manager';
 import { Logger } from '../core/logger';
+import { ReferenceIndexer } from './reference-indexer';
 
 export class AnalysisWriter {
   constructor(
     private readonly llmFactory: LLMFactory,
     private readonly logger: Logger,
     private readonly promptManager: PromptManager,
+    private readonly referenceIndexer: ReferenceIndexer,
   ) {}
 
   async writeSections(
@@ -24,11 +26,20 @@ export class AnalysisWriter {
       state.outline.sections.map(async (section) => {
         await delay(1000);
         this.logger.updateSpinner(`Writing section: ${section.section_title}`);
+
+        const relevantDocs = await this.referenceIndexer.similaritySearch(
+          section.section_title,
+        );
+        const relevantReferences = relevantDocs
+          .map((doc) => doc.pageContent)
+          .join('\n\n');
+
         const content = await sectionChain.invoke({
           product: state.product,
           productType: state.productType,
           section: JSON.stringify(section),
           interviews: JSON.stringify(state.interview_results),
+          relevantReferences: relevantReferences,
         });
         return {
           section_title: section.section_title,
@@ -51,10 +62,15 @@ export class AnalysisWriter {
 
     this.logger.startSpinner('Writing full analysis');
     await delay(1000);
+
+    const relevantDocs = await this.referenceIndexer.similaritySearch(state.product);
+    const relevantReferences = relevantDocs.map(doc => doc.pageContent).join('\n\n');
+
     let analysis = await analysisChain.invoke({
       product: state.product,
       productType: state.productType,
       sections: JSON.stringify(state.sections),
+      relevantReferences: relevantReferences
     });
 
     let fullAnalysis = analysis.content as string;

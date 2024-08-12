@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { BaseMessage } from '@langchain/core/messages';
+import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 
 export const productOutlineSchema = z.object({
   product_name: z.string().describe('The name of the digital product.'),
@@ -44,4 +45,5 @@ export interface ProductAnalysisState {
   }>;
   sections: Array<{ section_title: string; content: string }>;
   analysis: string;
+  vectorStore?: MemoryVectorStore;
 }

@@ -102,11 +102,11 @@ export class PromptManager {
       ChatPromptTemplate.fromMessages([
         [
           'system',
-          'Write a section for a digital product analysis based on the provided outline and expert interviews. Consider the specific product type in your analysis.',
+          'Write a section for a digital product analysis based on the provided outline and expert interviews. Consider the specific product type in your analysis. Use the relevant references provided to support your writing.',
         ],
         [
           'user',
-          'Product: {product}\nProduct Type: {productType}\nSection: {section}\nExpert interviews: {interviews}\n\n\nWrite the section content:',
+          'Product: {product}\nProduct Type: {productType}\nSection: {section}\nExpert interviews: {interviews}\nRelevant References: {relevantReferences}\n\n\nWrite the section content:',
         ],
       ]),
     );
@@ -116,11 +116,11 @@ export class PromptManager {
       ChatPromptTemplate.fromMessages([
         [
           'system',
-          'You are writing a complete digital product analysis based on the provided sections. Follow a professional and detailed format. Use markdown formatting for headings and subheadings. Ensure each section has a unique title and relevant subsections. Consider the specific product type throughout the analysis.',
+          'You are writing a complete digital product analysis based on the provided sections. Follow a professional and detailed format. Use markdown formatting for headings and subheadings. Ensure each section has a unique title and relevant subsections. Consider the specific product type throughout the analysis. Use the relevant references provided to support your writing.',
         ],
         [
           'user',
-          'Product: {product}\nProduct Type: {productType}\n\nSections: {sections}\n\nWrite the complete analysis using proper markdown formatting:',
+          'Product: {product}\nProduct Type: {productType}\n\nSections: {sections}\nRelevant References: {relevantReferences}\n\nWrite the complete analysis using proper markdown formatting:',
         ],
       ]),
     );
