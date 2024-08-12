@@ -142,7 +142,7 @@ export class ExpertManager {
 
   private createReferences(results: any[]): Record<string, string> {
     return results.reduce((acc, result, index) => {
-      acc[result.url] = `[${index + 1}] ${result.title}`;
+      acc[result.url] = `*[${index + 1}] ${result.title}*:\n${result.content}`;
       return acc;
     }, {});
   }

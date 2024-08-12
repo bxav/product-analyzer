@@ -16,9 +16,10 @@ export class SearchEngine {
       this.logger.warn(
         `Search failed for query: "${query}". Error: ${(error as Error).message}`,
       );
-      throw new SearchError(
-        `Search operation failed: ${(error as Error).message}`,
-      );
+      return [];
+      // throw new SearchError(
+      //   `Search operation failed: ${(error as Error).message}`,
+      // );
     }
   }
 
